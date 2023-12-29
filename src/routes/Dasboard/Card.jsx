@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Theme } from '../../Theme/Theme';
 
 const CardContainer = styled.div`
-  background-color: #f91;
+  background-color: ${Theme.colors.primary};
   padding: 20px;
   margin: 10px;
   border-radius: 8px;
@@ -13,7 +14,7 @@ const CardContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  color: #333;
+  color: #903;
 `;
 
 const Value = styled.p`

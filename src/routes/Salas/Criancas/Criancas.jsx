@@ -1,5 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
+import ButtonLogOut from '../../../components/Button/ButtonLogOut'
+import ButtonsHeaders from '../../../components/Button/ButtonsHeaders'
 
 const DivBox = styled.div`
 background-color: #fff;
@@ -52,18 +55,22 @@ a{
   text-shadow: 2px 2px 2px #ffffff88;
 }
 `
-
-function Adolescentes() {
-    return (
-        <DivBox>
-                <h1>SALA DAS CRIANÇAS</h1>
-            <DivSubBox>
-            <h2><a href="/cadastrocriancas">CADASTRO DAS CRIANÇAS</a></h2>
-                <h2><a href="/chamadascriancas">CHAMADA CRIANÇAS</a></h2>
-                <h2><a href="/MatriculadosListaDeChamadasCriancas">MATRICULADOS E LISTA DE PRESENÇA</a></h2>       
-               </DivSubBox>
-            <h1 ><a href="/">Home</a></h1>
-        </DivBox>
-    )
+function Criancas() {
+  const navigate = useNavigate();
+  
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+  return (
+    <DivBox>
+      <ButtonsHeaders />
+      <h1>SALA DAS CRIANÇAS</h1>
+      <DivSubBox>
+        <h2><a href="/cadastrocriancas">CADASTRO DAS CRIANÇAS</a></h2>
+        <h2><a href="/chamadascriancas">CHAMADA CRIANÇAS</a></h2>
+        <h2><a href="/MatriculadosListaDeChamadasCriancas">MATRICULADOS E LISTA DE PRESENÇA</a></h2>
+      </DivSubBox>
+    </DivBox>
+  )
 }
-export default Adolescentes
+export default Criancas

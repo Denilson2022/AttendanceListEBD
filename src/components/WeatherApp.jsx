@@ -48,15 +48,7 @@ const translateWeatherDescription = (description) => {
   const translations = {
 
     'light intensity drizzle': 'chuvisco de intensidade leve',
-    'drizzle': 'chuvisco',
-    'heavy intensity drizzle': 'chuvisco de intensidade forte',
-    'light intensity drizzle rain': 'chuva de chuvisco de intensidade leve',
-    'drizzle rain': 'chuva de chuvisco',
-    'heavy intensity drizzle rain': 'chuva de chuvisco de intensidade forte',
-    'shower rain and drizzle': 'chuva e chuvisco',
-    'heavy shower rain and drizzle': 'chuva intensa e chuvisco',
-    'shower drizzle': 'chuva intensa com chuvisco',
-
+   
     'thunderstorm with light rain': 'Tempestade com chuva fraca',
     'thunderstorm with rain': 'Tempestade com chuva',
     'thunderstorm with heavy rain': 'Tempestade com chuva intensa',
@@ -68,7 +60,7 @@ const translateWeatherDescription = (description) => {
     'thunderstorm with drizzle': 'Tempestade com chuvisco',
     'thunderstorm with heavy drizzle': 'Tempestade com chuvisco intenso',
 
-    'light intensity drizzle': 'Chuvisco de intensidade leve',
+    
     'drizzle': 'Chuvisco',
     'heavy intensity drizzle': 'Chuvisco de intensidade forte',
     'light intensity drizzle rain': 'Chuva de chuvisco de intensidade leve',

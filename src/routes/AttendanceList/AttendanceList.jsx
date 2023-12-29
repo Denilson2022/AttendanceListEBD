@@ -1,4 +1,4 @@
-import React from 'react'
+/* import React from 'react'
 
 function AttendanceList() {
   return (
@@ -10,4 +10,4 @@ function AttendanceList() {
   )
 }
 
-export default AttendanceList
+export default AttendanceList */

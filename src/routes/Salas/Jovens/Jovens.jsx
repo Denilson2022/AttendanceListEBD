@@ -1,5 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
+import ButtonLogOut from '../../../components/Button/ButtonLogOut'
+import ButtonsHeaders from '../../../components/Button/ButtonsHeaders'
+
 
 const DivBox = styled.div`
 background-color: #fff;
@@ -53,17 +57,24 @@ a{
 }
 `
 
+
 function Jovens() {
-    return (
-        <DivBox>
-            <h1>SALA DOS JOVENS</h1>
-            <DivSubBox>
-                <h2><a href="/cadastrojovens">CADASTRO DOS JOVENS</a></h2>
-                <h2><a href="/chamadasjovens">CHAMADA JOVENS</a></h2>
-                <h2><a href="/MatriculadosListaDeChamadasjovens">MATRICULADOS E LISTA DE PRESENÇA</a></h2>
-            </DivSubBox>
-            <h1 ><a href="/">Home</a></h1>
-        </DivBox>
-    )
+  const navigate = useNavigate();
+  
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+  return (
+    <DivBox>
+      <ButtonsHeaders />
+      <h1>SALA DOS JOVENS</h1>
+      <DivSubBox>
+        <h2><a href="/cadastrojovens">CADASTRO DOS JOVENS</a></h2>
+        <h2><a href="/chamadasjovens">CHAMADA JOVENS</a></h2>
+        <h2><a href="/MatriculadosListaDeChamadasjovens">MATRICULADOS E LISTA DE PRESENÇA</a></h2>
+      </DivSubBox>
+
+    </DivBox>
+  )
 }
 export default Jovens

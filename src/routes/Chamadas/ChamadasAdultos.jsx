@@ -1,128 +1,35 @@
-/* import React, { useState, useEffect } from 'react';
-import { arrayUnion, getFirestore, collection, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { initializeApp } from "firebase/app";
-import styled from 'styled-components';
-
- */
-
-
 import React, { useState, useEffect } from 'react';
-import {
-    getFirestore,
-    collection,
-    getDocs,
-    updateDoc,
-    doc,
-    arrayUnion,
-} from 'firebase/firestore';
+import { getFirestore, collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
-import styled from 'styled-components';
-
-
-const firebaseApp = initializeApp({
-    apiKey: "AIzaSyBs2HcwXcaFhRyr7R7Mbi-06h7pWhX37W4",
-    authDomain: "ebd4-ef0e8.firebaseapp.com",
-    projectId: "ebd4-ef0e8",
-    storageBucket: "ebd4-ef0e8.appspot.com",
-    messagingSenderId: "817327298885",
-    appId: "1:817327298885:web:d9dcfbb337f961b242462c"
-});
-
-
-
-
-const DivMaior = styled.div`
-background-color: #00000095;
-height: 100vw;
-
-
-`
-
-const DivMenor = styled.div`
-height: 80vh;
-font-size: 2vw;
-color: aliceblue;
-
-`
-
-const DivTitle = styled.div`
-background-color: #000000;
-display: flex;
-justify-content: space-between;
-
-`
-
-const DivTitle2 = styled.div`
-width: 50vw;
-display: flex;
-justify-content: space-around;
-`
-
-
-const UlElement = styled.ul`
-list-style: none;
-height: 60vh;
-margin-block: 0;
-padding-inline-start: 0px;
-
-gap: 2vh;
-display: flex;
-flex-direction: column;
-
-`
-const DivBox = styled.div`
-margin-top: 2vh;
-display: flex;
-height: 8vh;
-justify-content: space-between;
-align-items: center;
-background-color: #f79708;
-    &:hover{
-    background-color: yellow;
-    width: 100vw;
-
-    }
-`
+import DatePicker from 'react-datepicker';
+import FirebaseConfig from '../../service/firebase';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ButtonStyleAttendanceRegister } from '../../styles/Button/ButtonStyleAttendanceRegister';
+import ButtonsHeaders from '../../components/Button/ButtonsHeaders';
+import ResponsiveContainer from '../../styles/ResponsiveContainer';
+import DisplayInput from '../../components/Box/DisplayInput';
+import BodyBox from '../../components/Box/BodyBox';
+import TitleBox from '../../components/Box/TitleBox';
+import DisplayBox from '../../components/Box/DisplayBox';
+import DivTopBox from '../../components/Box/DivTopBox';
+import { DivBibleBox } from '../../components/Box/DivBibleBox';
+import { DivSubBox } from '../../components/Box/DivSubBox';
+import { DivMagazineBox } from '../../components/Box/DivMagazineBox';
 
 
 
-const LiElement = styled.li`
-height: 2vh;
-width: 50vw;
-font-size: 3vw;
-color: black;
-display: flex;
-align-items: center;
-`
-
-const DivLabels = styled.label`
-width: 50vw;
-font-size: 3vw;
-display: flex;
-justify-content: space-around;
-color: black;
-.input{
-
-    margin-left: 2vw;
-    transform: scale(2);
-}
-`
-
-
-
-
-
-
-
-
+const app = initializeApp(FirebaseConfig);
 
 const ChamadasAdultos = () => {
     const [users, setUsers] = useState([]);
+    const [chamadaDate, setChamadaDate] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const db = getFirestore(firebaseApp);
+                const db = getFirestore(app);
                 const usersRef = collection(db, 'adulto');
                 const data = await getDocs(usersRef);
 
@@ -131,6 +38,12 @@ const ChamadasAdultos = () => {
                     id: doc.id,
                     checkedTrue: false,
                     checkedFalse: false,
+                    checkedBiblia: false,
+                    checkedRevista: false,
+                    bibliaTrue: false,
+                    bibliaFalse: false,
+                    revistaTrue: false,
+                    revistaFalse: false,
                 }));
 
                 setUsers(usersData);
@@ -140,10 +53,9 @@ const ChamadasAdultos = () => {
         };
 
         fetchData();
-    }, []);
+    }, [chamadaDate]);
 
     const handleCheckboxChange = (id, type) => {
-        // Atualiza o estado local com o checkbox marcado
         setUsers((prevUsers) =>
             prevUsers.map((user) => {
                 if (user.id === id) {
@@ -151,6 +63,12 @@ const ChamadasAdultos = () => {
                         ...user,
                         checkedTrue: type === 'true' ? !user.checkedTrue : user.checkedTrue,
                         checkedFalse: type === 'false' ? !user.checkedFalse : user.checkedFalse,
+                        checkedBiblia: type === 'biblia' ? !user.checkedBiblia : user.checkedBiblia,
+                        checkedRevista: type === 'revista' ? !user.checkedRevista : user.checkedRevista,
+                        bibliaTrue: type === 'bibliaTrue' ? !user.bibliaTrue : user.bibliaTrue,
+                        bibliaFalse: type === 'bibliaFalse' ? !user.bibliaFalse : user.bibliaFalse,
+                        revistaTrue: type === 'revistaTrue' ? !user.revistaTrue : user.revistaTrue,
+                        revistaFalse: type === 'revistaFalse' ? !user.revistaFalse : user.revistaFalse,
                     };
                 }
                 return user;
@@ -160,58 +78,68 @@ const ChamadasAdultos = () => {
 
     const handleUpdatePresence = async () => {
         try {
-            const db = getFirestore(firebaseApp);
+            if (!chamadaDate) {
+                setErrorMessage('Por favor, selecione uma data antes de atualizar a presença.');
+                return;
+            }
+
+            const db = getFirestore(app);
             const usersRef = collection(db, 'adulto');
 
-            // Filtra apenas os usuários com pelo menos um dos checkboxes marcados
             const usersToUpdate = users.filter(
-                (user) => user.checkedTrue || user.checkedFalse
+                (user) => user.checkedTrue || user.checkedFalse ||
+                    user.bibliaTrue || user.bibliaFalse ||
+                    user.revistaTrue || user.revistaFalse
             );
 
-            // Atualiza o campo "presenca" para true ou false nos documentos dos usuários marcados
+            const formattedDate = chamadaDate.toISOString();
+
             const updatePromises = usersToUpdate.map(async (user) => {
                 const presenceValue = user.checkedTrue ? true : false;
+                const bibliaValue = user.bibliaTrue ? true : user.bibliaFalse ? false : null;
+                const revistaValue = user.revistaTrue ? true : user.revistaFalse ? false : null;
+
                 await updateDoc(doc(usersRef, user.id), {
-                    [`presenca_${Date.now()}`]: presenceValue,
+                    [`presenca_${formattedDate}`]: presenceValue,
+                    [`biblia_${formattedDate}`]: bibliaValue,
+                    [`revista_${formattedDate}`]: revistaValue,
                 });
             });
 
             await Promise.all(updatePromises);
 
-            console.log('Campos "presenca" atualizados com sucesso.');
+            setSuccessMessage('Dados atualizados com sucesso.');
 
-            // Limpa as propriedades "checked" após a atualização
             setUsers((prevUsers) =>
                 prevUsers.map((user) => ({
                     ...user,
                     checkedTrue: false,
                     checkedFalse: false,
+                    bibliaTrue: false,
+                    bibliaFalse: false,
+                    revistaTrue: false,
+                    revistaFalse: false,
                 }))
             );
+
+            // Recarregar a página automaticamente após o sucesso
         } catch (error) {
-            console.error('Erro ao atualizar campos "presenca":', error);
+            setErrorMessage('Erro ao atualizar campos: ' + error.message);
         }
     };
 
     return (
-        <DivMaior>
-            <DivMenor>
-                <DivTitle>
-
-                    <h1>Nome</h1>
-                    <DivTitle2>
-                        <h1>Presente</h1>
-                        <h1>Falta</h1>
-                    </DivTitle2>
-                </DivTitle>
-                <UlElement>
+        <ResponsiveContainer>
+            <BodyBox>
+                <ButtonsHeaders />
+                SALA DOS ADULTOS
+                <TitleBox>ALUNOS CHAMADAS</TitleBox>
+                <DatePicker selected={chamadaDate} onChange={(date) => setChamadaDate(date)} />
+                <ul>
                     {users.map((user) => (
-                        <DivBox key={user.id}>
-                            <div>
-                                <LiElement>{user.name}</LiElement>
-
-                            </div>
-                            <DivLabels>
+                        <DisplayBox key={user.id}>
+                            <DivTopBox>
+                                <li>{user.name}</li>
                                 <label>
                                     Presente:
                                     <input
@@ -232,14 +160,74 @@ const ChamadasAdultos = () => {
                                         disabled={user.checkedTrue}
                                     />
                                 </label>
+                            </DivTopBox>
+                            <DisplayInput>
+                                <DivSubBox>
+                                    <DivBibleBox>
 
-                            </DivLabels>
-                        </DivBox>
+                                        <label>
+                                        <span>Bíblia: </span> Sim
+                                            <input
+                                                className='input'
+                                                type="checkbox"
+                                                checked={user.bibliaTrue}
+                                                onChange={() => handleCheckboxChange(user.id, 'bibliaTrue')}
+                                                disabled={user.bibliaFalse}
+                                            />
+                                        </label>
+
+                                        <label>
+                                            Não
+                                            <input
+                                                className='input'
+                                                type="checkbox"
+                                                checked={user.bibliaFalse}
+                                                onChange={() => handleCheckboxChange(user.id, 'bibliaFalse')}
+                                                disabled={user.bibliaTrue}
+                                            />
+                                        </label>
+
+
+
+                                    </DivBibleBox>
+
+
+                                    <DivMagazineBox>
+
+
+                                        <label>
+                                        <span>Revista: </span>Sim
+                                            <input
+                                                className='input'
+                                                type="checkbox"
+                                                checked={user.revistaTrue}
+                                                onChange={() => handleCheckboxChange(user.id, 'revistaTrue')}
+                                                disabled={user.revistaFalse}
+                                            />
+                                        </label>
+                                        <label>
+                                            Não
+                                            <input
+                                                className='input'
+                                                type="checkbox"
+                                                checked={user.revistaFalse}
+                                                onChange={() => handleCheckboxChange(user.id, 'revistaFalse')}
+                                                disabled={user.revistaTrue}
+                                            />
+                                        </label>
+                                    </DivMagazineBox>
+                                </DivSubBox>
+                            </DisplayInput>
+                        </DisplayBox>
                     ))}
-                </UlElement>
-            </DivMenor >
-            <button onClick={handleUpdatePresence}>Atualizar Presença</button>
-        </DivMaior >
+                </ul>
+                {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+                {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
+                <ButtonStyleAttendanceRegister onClick={handleUpdatePresence}>
+                    Atualizar Dados
+                </ButtonStyleAttendanceRegister>
+            </BodyBox>
+        </ResponsiveContainer>
     );
 };
 

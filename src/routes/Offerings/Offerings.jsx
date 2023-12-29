@@ -1,152 +1,94 @@
-import React, { useState } from 'react';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { initializeApp } from "firebase/app";
+import React, { useEffect, useState } from 'react';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import styled from 'styled-components';
+import FirebaseConfig from '../../service/firebase';
+import { initializeApp } from 'firebase/app';
+import ButtonsHeaders from '../../components/Button/ButtonsHeaders';
+import DivSendBox from '../../components/Box/DivSendBox';
 
+const app = initializeApp(FirebaseConfig);
 
-const firebaseApp = initializeApp({
-    apiKey: "AIzaSyBs2HcwXcaFhRyr7R7Mbi-06h7pWhX37W4",
-    authDomain: "ebd4-ef0e8.firebaseapp.com",
-    projectId: "ebd4-ef0e8",
-    storageBucket: "ebd4-ef0e8.appspot.com",
-    messagingSenderId: "817327298885",
-    appId: "1:817327298885:web:d9dcfbb337f961b242462c"
-});
-
-
-
-
-const FormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  background-color: #f91;
-  min-height: 100vh;
-  h1{
-  text-shadow: 1px 1px 1px #ffffff7b;
-  text-align: center;
-  font-size: calc(1rem + ((4vw - 7.68px) * 0.6944));
-  letter-spacing: -.1rem;
-}
-h2{
-  text-align: center;
-  font-size: 1rem;
-  font-size: calc(1rem + ((2vw - 7.68px) * 0.6944));
-
-}
-  label {
-    color: white;
-  }
-
-  input {
-    padding: 0.5rem;
-    font-size: 1rem;
-  }
-
-  button {
-    background-color: #5c5c5c;
-    border: none;
-    padding: 1rem 2rem;
-    border-radius: 15%;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    &:hover{
-      background-color: #444;
-    }
+const Total = styled.div`
+  margin-top: 5vw;
+  color: #fff;
+  padding: 1vw 4vw;
+  font-size: 6vw;
+  font-weight: bolder;
+  background-color: #0c181c;
+  span {
+    color: #f91;
   }
 `;
 
-const DivBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2vh;
-`
+const DataOffering = styled.div`
+  color: black;
+`;
+
+const Value = styled.div`
+  color: #0c181c;
+  font-weight: bolder;
+`;
+
+const UlList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  li {
+    margin-top: 10px;
+    background-color: #f91;
+  }
+`;
 
 const Ofertas = () => {
-  const [valor, setValor] = useState('');
-  const [data, setData] = useState('');
+  const [ofertas, setOfertas] = useState([]);
 
-  const handleEnviarOferta = async () => {
-    try {
-      const db = getFirestore(firebaseApp);
-      const ofertasRef = collection(db, 'ofertas');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const db = getFirestore(app);
+        const ofertasRef = collection(db, 'ofertas');
+        const data = await getDocs(ofertasRef);
 
-      await addDoc(ofertasRef, {
-        valor: parseFloat(valor),
-        data,
-      });
+        const ofertasData = data.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-      // Limpa os campos após enviar
-      setValor('');
-      setData('');
-    } catch (error) {
-      console.error('Erro ao enviar oferta:', error);
-    }
+        setOfertas(ofertasData);
+      } catch (error) {
+        console.error('Error fetching ofertas:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const totalArrecadado = ofertas.reduce((total, oferta) => total + oferta.valor, 0);
+
+  const formatDate = (data) => {
+    if (!data || !data.toDate) return 'Data não definida';
+
+    // Obtenha a data sem a hora
+    const formattedDate = new Date(data.toDate()).toLocaleDateString();
+    return formattedDate;
   };
 
   return (
-    <FormWrapper>
-      <h1>SECRETARIA DA ESCOLA DOMINICAL</h1>
-      <h2>OFERTAS ARRECADADAS</h2>
-      <DivBox>
-      <label>
-        
-        <input type="number" placeholder='Digite o valor da oferta' value={valor} onChange={(e) => setValor(e.target.value)} />
-      </label>
-      <label>
-        
-        <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
-      </label>
-      <button onClick={handleEnviarOferta}>Enviar Oferta</button>
-      </DivBox>
-    </FormWrapper>
+    <DivSendBox>
+      <ButtonsHeaders />
+      <Total>
+        TOTAL OFERTAS: <span>R$ {totalArrecadado.toFixed(2)}</span>
+      </Total>
+
+      <UlList>
+        {ofertas.map((oferta) => (
+          <li key={oferta.id}>
+            <DataOffering>Data: {formatDate(oferta.data)}</DataOffering>
+            <Value>R$ {oferta.valor ? oferta.valor.toFixed(2) : 'Valor não definido'}</Value>
+          </li>
+        ))}
+      </UlList>
+    </DivSendBox>
   );
 };
 
 export default Ofertas;
-
-
-/* 
-
-const Ofertas = () => {
-  const [valor, setValor] = useState('');
-  const [data, setData] = useState('');
-
-  const handleEnviarOferta = async () => {
-    try {
-      const db = getFirestore(firebaseApp);
-      const ofertasRef = collection(db, 'ofertas');
-
-      await addDoc(ofertasRef, {
-        valor: parseFloat(valor),
-        data,
-      });
-
-      // Limpa os campos após enviar
-      setValor('');
-      setData('');
-    } catch (error) {
-      console.error('Erro ao enviar oferta:', error);
-    }
-  };
-
-  return (
-    <div>
-      <label>
-        Valor:
-        <input type="number" value={valor} onChange={(e) => setValor(e.target.value)} />
-      </label>
-      <label>
-        Data:
-        <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
-      </label>
-      <button onClick={handleEnviarOferta}>Enviar Oferta</button>
-    </div>
-  );
-};
-
-export default Ofertas;
- */

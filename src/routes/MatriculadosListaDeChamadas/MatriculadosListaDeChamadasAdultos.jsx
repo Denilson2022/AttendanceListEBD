@@ -1,219 +1,174 @@
 
-
-import { initializeApp } from "firebase/app";
-
 import React, { useState, useEffect } from 'react';
-import {
-    getFirestore,
-    collection,
-    getDocs,
-    addDoc,
-    Timestamp,
-} from "firebase/firestore";
-import styled from "styled-components";
-
-const firebaseApp = initializeApp({
-    apiKey: "AIzaSyBs2HcwXcaFhRyr7R7Mbi-06h7pWhX37W4",
-    authDomain: "ebd4-ef0e8.firebaseapp.com",
-    projectId: "ebd4-ef0e8",
-    storageBucket: "ebd4-ef0e8.appspot.com",
-    messagingSenderId: "817327298885",
-    appId: "1:817327298885:web:d9dcfbb337f961b242462c"
-});
+import { Theme } from '../../Theme/Theme';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import FirebaseConfig from '../../service/firebase';
+import { initializeApp } from 'firebase/app';
+import BodyBox from '../../components/Box/BodyBox';
+import ButtonsHeaders from '../../components/Button/ButtonsHeaders';
+import TitleBox from '../../components/Box/TitleBox';
+import DivBox from '../../components/Box/DivBox';
+import { customStyles } from '../../styles/GeneralStyles';
+import DivListBox from '../../components/Box/DivListBox' 
+import DivPresencaBox from '../../components/Box/DivPresencaBox'
+import DivInterBox from '../../components/Box/DivInterBox'
+import DivSeccionBox from '../../components/Box/DivSeccionBox';
 
 
-const ListStyle = styled.div`
-display: flex;
-flex-direction: column;
-align-items: center;
-background-color: #fff;
-background-image: linear-gradient(193deg, #FFFFFF 0%, #5f5f5f 16%, #282828 34%, #1d1d1d 62%);
-min-height: 100vh;
-
-ul{
-        
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-block-start: 0;
-        margin-block-end: 0;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        padding-inline-start: 0;
-        gap: 2vw;
-        height: auto;
-        width: 80vw;
-        background-color: #111;
-        padding: 4vw;
-        border-radius: 8%;
-        box-shadow: 1px 1px 5px #ffffff65;
-    }
-    
-    li{
-        width: 100vw;
-        font-size: 3vw;
-        color: #111;
-        list-style: none;
-        display: flex;
-        justify-content: space-between;
-}`
-
-    const Title = styled.h1`
-
-    color: #f91;
-    font-size: 2.5rem;
-    text-shadow: 2px 2px 2px #111111a2;
-
-    `
-    const SubTileH2 = styled.h1`
-
-        color: yellow;
-        font-size: 1rem;
-     
-    @media screen and (min-width: 800px) {
-        font-size: 3rem;
-    }
-
-    
-        `
-
-const SubTitle = styled.div`
-    display: flex;    
-    align-items: center;
-    justify-content: center;
-    margin-left: 5vw;
-    margin-bottom: -5vw;
-    height: 20vh;
-    width: 100vw;
-    color: #f91;
-    text-shadow: 2px 2px 2px black;
-    
-    `
-
-const Bibi = styled.div`
-    display: flex;
-    align-items: center;
-    background-color: #f91;
-    width: 70vw;
-    height: 8vw;
-    text-shadow: 1px 1px 1px #0000007b;
-    padding-left: 5vw;
-        &:hover
-        {
-            background-color: yellow;
-        }
-        li{
-            
-            font-size: 1.5rem;
-            
-        }
-        `
-        
-const Nome = styled.h1`
-    margin-right: 30vw;
-    font-size: 1rem;
-    color: white;
-    @media screen and (min-width: 800px) {
-    font-size: 2rem;
-    }
-    `;
-
-const Centro = styled.h1`
-    margin-right: 10vw; 
-    font-size: 1rem;
-    color: white;
-    @media screen and (min-width: 800px) {
-    font-size: 2rem;
-    }
-    `;
-
-const DivPresenca = styled.div`
-display: flex;
-align-items: center;
-li{
-    width: 20vw;
-    text-align: end;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-shadow: 1px 1px 1px #000000ad;
-    
-    
-}
-span{
-    color: red;
-    font-weight: bolder;
-    text-shadow: 1px 1px 1px #000000ad;
-}
-
-`
-
-
-
+const app = initializeApp(FirebaseConfig);
 
 
 const MatriculadosListaDeChamadasAdultos = () => {
-    const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const db = getFirestore(firebaseApp);
-                const usersRef = collection(db, 'adulto');
-                const data = await getDocs(usersRef);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const db = getFirestore(app);
+        const usersRef = collection(db, 'adulto');
+        const data = await getDocs(usersRef);
 
-                const usersData = data.docs.map((doc) => {
-                    const userData = doc.data();
+        const usersData = data.docs.map((doc) => {
+          const userData = doc.data();
 
-                    // Encontra as chaves que começam com "presenca_"
-                    const presencaKeys = Object.keys(userData).filter(key => key.startsWith("presenca_"));
+          const presencaKeys = Object.keys(userData).filter(
+            (key) => key.startsWith('presenca_')
+          );
+          const bibliaKeys = Object.keys(userData).filter(
+            (key) => key.startsWith('biblia_')
+          );
+          const revistaKeys = Object.keys(userData).filter(
+            (key) => key.startsWith('revista_')
+          );
 
-                    // Calcula o número de presenças e faltas
-                    const trueCount = presencaKeys.filter(key => userData[key] === true).length;
-                    const falseCount = presencaKeys.filter(key => userData[key] === false).length;
+          const trueCount = presencaKeys.filter(
+            (key) => userData[key]['000Z'] === true
+          ).length;
+          const falseCount = presencaKeys.filter(
+            (key) => userData[key]['000Z'] === false
+          ).length;
 
-                    return {
-                        ...userData,
-                        id: doc.id,
-                        trueCount,
-                        falseCount,
-                    };
-                });
+          const bibliaTrueCount = bibliaKeys.filter(
+            (key) => userData[key]['000Z'] === true
+          ).length;
+          const bibliaFalseCount = bibliaKeys.filter(
+            (key) => userData[key]['000Z'] === false
+          ).length;
 
-                setUsers(usersData);
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            }
-        };
+          const revistaTrueCount = revistaKeys.filter(
+            (key) => userData[key]['000Z'] === true
+          ).length;
+          const revistaFalseCount = revistaKeys.filter(
+            (key) => userData[key]['000Z'] === false
+          ).length;
 
-        fetchData();
-    }, []);
+          return {
+            ...userData,
+            id: doc.id,
+            trueCount,
+            falseCount,
+            bibliaTrueCount,
+            bibliaFalseCount,
+            revistaTrueCount,
+            revistaFalseCount,
+          };
+        });
 
-    return (
-        <ListStyle>
-            <Title>SALA DOS ADULTOS</Title>
-            <SubTileH2>
-                Lista de matriculados e presenças
-            </SubTileH2>
-            <SubTitle>
-                <Nome>Nome</Nome>
-                <Centro>Presenças</Centro>
-                <Centro>Faltas</Centro>
-            </SubTitle>
-            <ul>
-                {users.map((user) => (
-                    <Bibi key={user.id}>
-                        <li>{user.name}</li>
-                        <DivPresenca>
-                            <li>{user.trueCount}</li>
-                            <li><span>{user.falseCount}</span></li>
-                        </DivPresenca>
-                    </Bibi>
-                ))}
-            </ul>
-        </ListStyle>
-    );
+        setUsers(usersData);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <BodyBox>
+      <ButtonsHeaders />
+      <div style={Theme.textCenter}>
+        SALA DOS ADULTOS
+        <TitleBox style={customStyles}>
+          Lista de matriculados e presenças
+        </TitleBox>
+      </div>
+      <DivSeccionBox>
+        <h2>Nome</h2>
+        <div>
+          <h5>Presença</h5>
+          <h5>Falta</h5>
+        </div>
+      </DivSeccionBox>
+      <DivBox>
+        <ul>
+          {users.map((user) => (
+            <DivListBox key={user.id}>
+              <li>
+                <DivPresencaBox>
+                  {user.name}
+                  <DivInterBox>
+                    <li>{user.trueCount}</li>
+                    <li>
+                      <span>{user.falseCount}</span>
+                    </li>
+                  </DivInterBox>
+                </DivPresencaBox>
+
+                <p>
+                  Bíblia
+                  <DivInterBox>
+                    <li>{user.bibliaTrueCount}</li>
+                    <li>
+                      <span>{user.bibliaFalseCount}</span>
+                    </li>
+                  </DivInterBox>
+
+                </p>
+                <p>
+                  Revista
+                  <DivInterBox>
+                    <li>{user.revistaTrueCount}</li>
+                    <li>
+                      <span>{user.revistaFalseCount}</span>
+                    </li>
+                  </DivInterBox>
+                </p>
+              </li>
+            {/*   <DivCheckbox> */}
+
+                {/*  <DivInter>
+                <li>{user.trueCount}</li>
+                <li>
+                  <span>{user.falseCount}</span>
+                </li>
+                </DivInter>
+              */}
+
+             {/*    <DivLivros> */}
+                  {/*  <DivInter>
+                <li>{user.bibliaTrueCount}</li>
+                <li>
+                  <span>{user.bibliaFalseCount}</span>
+                </li>
+                </DivInter> */}
+
+                  {/*    <DivInter>
+                <li>{user.revistaTrueCount}</li>
+                <li>
+                  <span>{user.revistaFalseCount}</span>
+                </li>
+                </DivInter> */}
+
+
+
+           {/*      </DivLivros>
+              </DivCheckbox> */}
+            </DivListBox>
+          ))}
+        </ul>
+      </DivBox>
+    </BodyBox>
+  );
 };
 
 export default MatriculadosListaDeChamadasAdultos;

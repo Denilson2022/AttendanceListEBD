@@ -1,5 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
+import ButtonLogOut from '../../../components/Button/ButtonLogOut'
+import AuthButton from '../../../components/Button/AuthButton'
+import ButtonsHeaders from '../../../components/Button/ButtonsHeaders'
+
+
 
 const DivBox = styled.div`
 background-color: #fff;
@@ -54,8 +60,16 @@ a{
 `
 
 function Adultos() {
+
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate(-1); 
+  };
+  
   return (
     <DivBox>
+      <ButtonsHeaders/>
         <h1>
           SALA DOS ADULTOS
         </h1>
@@ -64,7 +78,7 @@ function Adultos() {
         <h2><a href="/chamadasadultos">CHAMADA ADULTOS</a></h2>
         <h2><a href="/MatriculadosListaDeChamadasadultos">MATRICULADOS E LISTA DE PRESENÇA</a></h2>
       </DivSubBox>
-      <h1 ><a href="/">Home</a></h1>
+
     </DivBox>
   )
 }

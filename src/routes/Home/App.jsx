@@ -3,17 +3,19 @@ import { DateTimeWeather, MagicSquare, Quadrado, Quadrados } from '../../styles/
 import WeatherApp from '../../components/WeatherApp'
 import DateTime from '../../components/DateTime'
 import styled from 'styled-components'
+import {stylesDisplayHome } from '../../styles/GeneralStyles'
 
 
 const Main = styled.div`
 display: flex;
-justify-content: center;
+justify-content: space-around;
+font-family: sans-serif;
 `;
+
+
 
 const App = () => {
   return (
-    <div className="App" >
-
       <Main>
         <DateTimeWeather>
           <WeatherApp />
@@ -22,26 +24,22 @@ const App = () => {
 
         <MagicSquare squareSize={{ Mac: 100, tl: 100, lg: 100, md: 100, sm: 100 }}>
           <Quadrado>
-            {/* <Quadrados>
-              <a href="/cadastro">CADASTRO</a>
-            </Quadrados> */}
             <Quadrados>
-              <a href="/checkbox">CHAMADAS</a>
+              <a href="/dasboardattendances">PRESENÇAS</a>
             </Quadrados>
             <Quadrados>
-              <a href="/Offerings">OFERTAS</a>
+              <a href="/offerings">OFERTAS</a>
             </Quadrados>
             <Quadrados>
               <a href="/expenses">GASTOS</a>
             </Quadrados>
-            <Quadrados>
-              <a id='general' href="/dashboard">SALAS</a>
+            <Quadrados style={stylesDisplayHome}>
+              <a href="/dashboard">ADMINISTRADOR</a>
             </Quadrados>
           </Quadrado>
-
+            
         </MagicSquare>
       </Main>
-    </div>
   )
 }
 

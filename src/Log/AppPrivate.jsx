@@ -1,9 +1,6 @@
-
-
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
-
 import { onAuthStateChanged } from 'firebase/auth'
 
 
@@ -17,8 +14,7 @@ import Dashboard from '../routes/Dasboard/Dashboard'
 import Adultos from '../routes/Salas/Adultos/Adultos'
 import Expenses from '../routes/Expenses/Expenses'
 import ChamadasJovens from '../routes/Chamadas/ChamadasJovens'
-/* import List from '../routes/Firebase/list'
-import Checkbox from '../routes/Firebase/Checkbox' */
+
 import Jovens from '../routes/Salas/Jovens/Jovens'
 import Adolescentes from '../routes/Salas/Adolescentes/Adolescentes'
 import Criancas from '../routes/Salas/Criancas/Criancas'
@@ -37,8 +33,7 @@ import DashboardAttendances from '../routes/Dasboard/DashboardAttendances'
 import { getAuth } from "firebase/auth"
 import FirebaseConfig from '../service/firebase'
 import { initializeApp } from "firebase/app"
-/* import ListForDate from '../routes/LisForDate/ListForDate' */
-import ProcessoInfo from '../API/API'
+
 import ExpensesAdm from '../routes/Expenses/ExpensesAdm'
 import Finance from '../routes/Salas/Financeiro/Finance'
 import ChamadasAdolescentesPorData from '../routes/ChamadaPorData/ChamadaPorDataAdolescentes/ChamadasAdolescentesPorData '
@@ -137,8 +132,7 @@ function AppPrivate() {
         <Route path='/adultos' element={<Adultos />}></Route>
         <Route path='/expenses' element={<Expenses />}></Route>
         <Route path='/offerings' element={<Ofertas />}></Route>
-       {/*  <Route path='/list' element={<List />}></Route>
-        <Route path="/checkbox" element={<Checkbox />}></Route> */}
+     
         <Route path='/adultos' element={<Adultos />}></Route>
         <Route path='/jovens' element={<Jovens />}></Route>
         <Route path='/adolescentes' element={<Adolescentes />}></Route>
@@ -150,12 +144,6 @@ function AppPrivate() {
         <Route path='/loginandout' element={<LogInAndOut />}></Route>
         <Route path='/loginandout' element={<AppPrivate />}></Route>
         <Route path='/dasboardattendances' element={<DashboardAttendances />}></Route>
-{/*         <Route path='/listfordate' element={<ListForDate />}></Route> */}
-        <Route path='/processoInfo' element={<ProcessoInfo />}></Route>
-
-
-        {/* <Route index element={<App />} /> */}
-{/*         <Route path="/dataschamadasadolescentes/:date" element={<DatasChamadasAdolescentes />} /> */}
 
         <Route path="/DatasChamadasAdolescentes/:date" element={<DatasChamadasAdolescentesPorData />}/>
         <Route path="/dataschamadasadolescentes/*" element={<DatasChamadasAdolescentes />} />
